@@ -1,47 +1,55 @@
+import asyncio
+from typing import AsyncGenerator, Any, Coroutine
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from app.prompts import get_prompt
 from openai import AsyncOpenAI
-from app.routers import API_KEY, API_ENDPOINT
-from logging import getLogger
+from openai.resources.chat.completions.completions import AsyncStream,ChatCompletionChunk
+from app.routers import API_KEY, API_ENDPOINT, MODEL
+from app.internal import logger
 
-logger = getLogger(__name__)
 router = APIRouter()
 
 client = AsyncOpenAI(api_key=API_KEY, base_url=API_ENDPOINT, max_retries=3, timeout=300)
 
 
 class WikipediaRequest(BaseModel):
-    keyword: str
+    question: str
+    
+    def __str__(self) -> str:
+        return f"question: {self.question[:20]}..."
 
 
 @router.post("/wikipedia/glossary")
-async def wikipedia(request: WikipediaRequest):
+async def wikipedia(request: WikipediaRequest) -> StreamingResponse:
     logger.info(f"wikipedia request: {request}")
     prompt = get_prompt("wikipedia", "glossary")
     if not prompt:
         raise HTTPException(status_code=404, detail="prompt not found")
-    keyword = request.keyword
-    prompt = prompt.replace("{{keyword}}", keyword)
     response = await client.chat.completions.create(
-        model="deepseek-chat",
-        messages=[{
-            "role": "user",
+        model=MODEL,
+        messages=[
+          {
+            "role": "system",
             "content": prompt
+          },
+          {
+            "role": "user",
+            "content": request.question
         }],
-        temperature=1.3,
+        temperature=0.7,
         max_tokens=2048,
         stream=True,
     )
+    
+    return StreamingResponse(parse_response(response), media_type="text/event-stream")
 
-    data = ""
+
+async def parse_response(response: AsyncStream[ChatCompletionChunk]) -> AsyncGenerator[str, None]:  
     async for chunk in response:
-        data += chunk.choices[0].delta.content
-
-    return {"status": "success", "data": data}
-
-
-@router.get("/test")
-async def test():
-    logger.info("test request")
-    return {"status": "success", "data": "test"}
+        if chunk.choices:
+            content = chunk.choices[0].delta.content
+            if content:
+                yield f"data: {content}\n\n"
+                await asyncio.sleep(0.01)
