@@ -1,0 +1,31 @@
+services:
+  ui:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    ports:
+      - "12340:11170"
+    depends_on:
+      - server
+    environment:
+      - API_URL=http://server:11160
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "12341:11160"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=11160
+      - API_ENDPOINT=
+      - API_KEY=
+      - MODEL=
+    volumes:
+      - ./server:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11160/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
