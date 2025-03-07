@@ -1,6 +1,6 @@
-import { Layout, Menu } from "antd";
-import "./App.css";
-import Sider from "./layout/Sider";
+import { Layout } from "antd";
+import Sider from "@/layout/Sider";
+import ThemeProvider from "@/layout/ThemeProvider";
 
 const { Header, Content, Footer } = Layout;
 
@@ -21,7 +21,6 @@ const contentStyle: React.CSSProperties = {
   backgroundColor: "#0958d9",
 };
 
-
 const footerStyle: React.CSSProperties = {
   textAlign: "center",
   color: "#fff",
@@ -37,14 +36,18 @@ const layoutStyle = {
 
 const App = () => {
   return (
-    <Layout style={layoutStyle}>
-      
-      <Layout>
-        <Header style={headerStyle}>Header</Header>
-        <Content style={contentStyle}>Content</Content>
-        <Footer style={footerStyle}>Footer</Footer>
+    <ThemeProvider>
+      <Layout style={layoutStyle}>
+        <Sider />
+        <Layout>
+          <Header data-tauri-drag-region style={headerStyle}>
+            Header
+          </Header>
+          <Content style={contentStyle}>Content</Content>
+          <Footer style={footerStyle}>Footer</Footer>
+        </Layout>
       </Layout>
-    </Layout>
+    </ThemeProvider>
   );
 };
 

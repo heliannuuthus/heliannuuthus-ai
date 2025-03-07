@@ -1,33 +1,55 @@
 {
-  "name": "ui",
-  "private": true,
-  "version": "0.1.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "tauri": "tauri"
-  },
-  "dependencies": {
-    "@tauri-apps/api": "^2",
-    "@tauri-apps/plugin-opener": "^2",
-    "antd": "^5.24.3",
-    "antd-style": "^3.7.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "devDependencies": {
-    "@tauri-apps/cli": "^2",
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.4",
-    "typescript": "~5.6.2",
-    "vite": "^6.0.3"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
-  }
+	"name": "ui",
+	"private": true,
+	"version": "0.1.0",
+	"type": "module",
+	"scripts": {
+		"dev": "cross-env RUST_BACKTRACE=1 tauri dev -f verge-dev -- --profile fast-dev",
+		"dev:diff": "cross-env RUST_BACKTRACE=1 tauri dev -f verge-dev -- --profile fast-dev",
+		"build": "cross-env NODE_OPTIONS='--max-old-space-size=4096' tauri build",
+		"build:fast": "cross-env NODE_OPTIONS='--max-old-space-size=4096' tauri build -- --profile fast-release",
+		"web:dev": "vite",
+		"web:build": "tsc --noEmit && vite build",
+		"web:serve": "vite preview",
+		"tauri": "tauri",
+		"clean": "cd ./src-tauri && cargo clean && cd -"
+	},
+	"dependencies": {
+		"@tauri-apps/api": "^2",
+		"@tauri-apps/plugin-clipboard-manager": "^2.2.1",
+		"@tauri-apps/plugin-dialog": "^2.2.0",
+		"@tauri-apps/plugin-fs": "^2.2.0",
+		"@tauri-apps/plugin-global-shortcut": "^2.2.0",
+		"@tauri-apps/plugin-notification": "^2.2.1",
+		"@tauri-apps/plugin-opener": "^2",
+		"@tauri-apps/plugin-process": "^2.2.0",
+		"@tauri-apps/plugin-shell": "2.2.0",
+		"@tauri-apps/plugin-updater": "2.3.0",
+		"@tauri-apps/plugin-window-state": "^2.2.1",
+		"antd": "^5.24.3",
+		"antd-style": "^3.7.1",
+		"axios": "^1.7.9",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
+	},
+	"devDependencies": {
+		"@tauri-apps/cli": "^2",
+		"@types/react": "^18.3.1",
+		"@types/react-dom": "^18.3.1",
+		"@vitejs/plugin-react": "^4.3.4",
+		"cross-env": "^7.0.3",
+		"meta-json-schema": "^1.19.1",
+		"node-fetch": "^3.3.2",
+		"prettier": "^3.4.2",
+		"pretty-quick": "^4.0.0",
+		"typescript": "~5.6.2",
+		"vite": "^6.0.3",
+		"vite-plugin-svgr": "^4.3.0"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild"
+		]
+	},
+	"packageManager": "pnpm@10.6.0"
 }

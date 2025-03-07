@@ -1,35 +1,37 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "ui",
+  "productName": "heliannuuthus ai ui",
   "version": "0.1.0",
   "identifier": "com.heliannuuthus.ai.ui",
   "build": {
-    "beforeDevCommand": "pnpm dev",
-    "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "pnpm build",
+    "beforeDevCommand": "pnpm run web:dev",
+    "devUrl": "http://localhost:3000",
+    "beforeBuildCommand": "pnpm run web:build",
     "frontendDist": "../dist"
   },
   "app": {
-    "windows": [
-      {
-        "title": "ui",
-        "width": 800,
-        "height": 600
-      }
-    ],
     "security": {
+      "capabilities": ["desktop-capability", "migrated"],
+      "assetProtocol": {
+        "scope": ["$APPDATA/**", "$RESOURCE/../**", "**"],
+        "enable": true
+      },
       "csp": null
     }
   },
   "bundle": {
     "active": true,
-    "targets": "all",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "resources": [],
+    "publisher": "annuus artificial intelligence kit",
+    "category": "DeveloperTool",
+    "shortDescription": "Annuus Artificial Intelligence Kit",
+    "createUpdaterArtifacts": true
   }
 }
